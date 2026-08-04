@@ -27,6 +27,9 @@
   },
   "license": "MIT",
   "author": "Rudrendu Paul",
+  "contributors": [
+    { "name": "Sourav Nandy" }
+  ],
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,9 +38,8 @@
   },
   "files": [
     "dist",
-    "PACKAGE_README.md"
+    "README.md"
   ],
-  "readme": "PACKAGE_README.md",
   "engines": {
     "node": ">=18"
   },

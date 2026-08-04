@@ -6,11 +6,12 @@ build-backend = "hatchling.build"
 name = "swarmmesh-cli"
 version = "0.1.0"
 description = "Shared-context and memory coordination server + CLI for swarms of parallel AI agents, speaking the SwarmMesh v1 protocol (HTTP + WebSocket + MCP)."
-readme = "PACKAGE_README.md"
+readme = "../README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
     { name = "Rudrendu Paul" },
+    { name = "Sourav Nandy" },
 ]
 keywords = [
     "ai-agents",
@@ -66,6 +67,7 @@ dev = [
 Homepage = "https://github.com/RudrenduPaul/swarmmesh"
 Repository = "https://github.com/RudrenduPaul/swarmmesh"
 Issues = "https://github.com/RudrenduPaul/swarmmesh/issues"
+"Author - Rudrendu Paul" = "https://github.com/RudrenduPaul"
 
 [project.scripts]
 swarmmesh = "swarmmesh_cli.cli:app"
