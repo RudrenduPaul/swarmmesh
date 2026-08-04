@@ -1,6 +1,4 @@
 # Assistant/internal config -- never committed to this public repo.
-# See strategy-oss-all-implementation-plan/swarmmesh/ in the private
-# oss-ideas-execution-strategy repo for the canonical copies.
 CLAUDE.md
 TODOS.md
 BRANCH_PROTECTION.md
