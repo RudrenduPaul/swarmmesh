@@ -196,7 +196,7 @@ def context_set(
     namespace: str = typer.Argument(...),
     key: str = typer.Argument(...),
     value: str = typer.Argument(..., help="JSON value, or a plain string if not valid JSON."),
-    agent_id: str = typer.Option(..., "--agent-id", help="Agent publishing this value."),
+    agent_id: str = typer.Option("cli", "--agent-id", help="Agent publishing this value."),
     ttl: int | None = typer.Option(None, "--ttl", help="Time-to-live in seconds."),
     host: str = HostOption,
     port: int = PortOption,
@@ -306,7 +306,7 @@ def context_delete(
 def memory_write(
     namespace: str = typer.Argument(...),
     text: str = typer.Argument(...),
-    agent_id: str = typer.Option(..., "--agent-id", help="Agent writing this memory entry."),
+    agent_id: str = typer.Option("cli", "--agent-id", help="Agent writing this memory entry."),
     metadata: str | None = typer.Option(None, "--metadata", help="JSON object string."),
     id: str | None = typer.Option(
         None, "--id", help="Explicit entry id (server generates one if unset)."
