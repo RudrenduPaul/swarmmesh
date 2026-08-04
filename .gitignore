@@ -1,0 +1,43 @@
+# Assistant/internal config -- never committed to this public repo.
+# See strategy-oss-all-implementation-plan/swarmmesh/ in the private
+# oss-ideas-execution-strategy repo for the canonical copies.
+CLAUDE.md
+TODOS.md
+BRANCH_PROTECTION.md
+docs/branch-protection.md
+docs/security-review-*.md
+
+# Local agent-tooling state
+.claude/
+
+# Secrets, should never exist in this repo but guard anyway
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+npm-debug.log*
+*.tsbuildinfo
+coverage/
+
+# OS
+.DS_Store

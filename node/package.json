@@ -1,0 +1,74 @@
+{
+  "name": "swarmmesh-cli",
+  "version": "0.1.0",
+  "description": "SwarmMesh: a shared-context and memory coordination server for swarms of parallel AI agents. HTTP + WebSocket mesh server, CLI, and MCP surface implementing the SwarmMesh protocol.",
+  "keywords": [
+    "swarmmesh",
+    "ai-agents",
+    "multi-agent",
+    "agent-swarm",
+    "agent-coordination",
+    "shared-memory",
+    "shared-context",
+    "mcp",
+    "model-context-protocol",
+    "cli",
+    "websocket",
+    "bm25"
+  ],
+  "homepage": "https://github.com/RudrenduPaul/swarmmesh#readme",
+  "bugs": {
+    "url": "https://github.com/RudrenduPaul/swarmmesh/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RudrenduPaul/swarmmesh.git",
+    "directory": "node"
+  },
+  "license": "MIT",
+  "author": "Rudrendu Paul",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "swarmmesh": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "PACKAGE_README.md"
+  ],
+  "readme": "PACKAGE_README.md",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src tests --ext .ts",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
+    "dev": "ts-node --esm src/cli.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "better-sqlite3": "^11.7.0",
+    "commander": "^12.1.0",
+    "express": "^4.21.2",
+    "undici": "^6.21.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
+    "@typescript-eslint/parser": "^8.19.1",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^8.57.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

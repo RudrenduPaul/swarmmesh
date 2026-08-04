@@ -1,0 +1,39 @@
+name: No internal docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Fail on forbidden internal filenames
+        run: |
+          set -e
+          hits=$(git ls-files | grep -E '^(CLAUDE\.md|TODOS\.md|BRANCH_PROTECTION\.md|docs/branch-protection\.md|docs/security-review-.*\.md|docs/launch/.*|docs/.*preprint.*)$' || true)
+          if [ -n "$hits" ]; then
+            echo "Internal-only file(s) tracked in this public repo:"
+            echo "$hits"
+            exit 1
+          fi
+
+      - name: Fail on internal-process language in tracked files
+        run: |
+          set -e
+          pattern='CEO review|office.?hours|eng.?review|devex review|CSO review|CSO threat.?model|/oss-[0-9]+-[a-z-]+|/plan-eng-review|/review finding|Reviewer Concern|viability score|WOUNDED|fundrais|investor.?outreach|Show HN draft|hype.?seed'
+          hits=$(git grep -InE "$pattern" -- . ':!.github/workflows/no-internal-docs.yml' ':!scripts/check-no-internal-docs.sh' || true)
+          if [ -n "$hits" ]; then
+            echo "Internal-process language found in tracked files:"
+            echo "$hits"
+            exit 1
+          fi
