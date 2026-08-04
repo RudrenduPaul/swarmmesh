@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "swarmmesh-cli"
-version = "0.1.0"
+version = "0.1.1"
 description = "Shared-context and memory coordination server + CLI for swarms of parallel AI agents, speaking the SwarmMesh v1 protocol (HTTP + WebSocket + MCP)."
 readme = "../README.md"
 requires-python = ">=3.10"

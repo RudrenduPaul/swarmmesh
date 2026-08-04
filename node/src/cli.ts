@@ -4,6 +4,7 @@
  * a human-readable default, and exits non-zero on error so scripting/CI callers can
  * detect failure without parsing text.
  */
+import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { Command } from "commander";
 import {
@@ -87,7 +88,7 @@ export function buildCli(): Command {
     .description(
       "Shared-context and memory coordination server for swarms of parallel AI agents.",
     )
-    .version("0.1.0");
+    .version("0.1.1");
 
   program
     .command("serve")
@@ -360,8 +361,24 @@ async function main(): Promise<void> {
 // percent-encodes characters like spaces in the path while process.argv[1] does not —
 // a naive `file://${process.argv[1]}` comparison silently never matches on a path
 // containing a space, and the CLI would parse zero arguments no matter what was passed.
-const isMainModule =
-  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
+//
+// process.argv[1] is also realpath-resolved before the comparison: an npm-installed
+// `bin` is a symlink (node_modules/.bin/swarmmesh -> ../swarmmesh-cli/dist/cli.js), and
+// Node's ESM loader resolves import.meta.url through that symlink to the real target
+// while process.argv[1] keeps the symlink path as invoked. Without resolving both sides
+// the same way, this comparison never matches for any real npm/global install, and the
+// CLI silently does nothing no matter what was passed — confirmed live, this shipped
+// broken in 0.1.0.
+function resolveMainModulePath(argvPath: string): string | undefined {
+  try {
+    return realpathSync(argvPath);
+  } catch {
+    return undefined;
+  }
+}
+
+const mainModulePath = process.argv[1] !== undefined ? resolveMainModulePath(process.argv[1]) : undefined;
+const isMainModule = mainModulePath !== undefined && import.meta.url === pathToFileURL(mainModulePath).href;
 if (isMainModule) {
   main().catch((error: unknown) => {
     console.error(error instanceof Error ? error.message : String(error));

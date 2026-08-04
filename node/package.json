@@ -1,6 +1,6 @@
 {
   "name": "swarmmesh-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SwarmMesh: a shared-context and memory coordination server for swarms of parallel AI agents. HTTP + WebSocket mesh server, CLI, and MCP surface implementing the SwarmMesh protocol.",
   "keywords": [
     "swarmmesh",
