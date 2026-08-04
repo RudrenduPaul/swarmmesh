@@ -15,12 +15,11 @@ agent roles, or route work between agents. Your existing framework (or your
 own code) keeps doing that. SwarmMesh only answers one question: how do
 independent agent processes read and write the same shared state.
 
-<!-- TODO: add build-status and version badges once CI is green and packages are published -->
+[![CI (Python)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml/badge.svg)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml)
+[![CI (Node)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-node.yml/badge.svg)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-node.yml)
+[![PyPI](https://img.shields.io/pypi/v/swarmmesh-cli.svg)](https://pypi.org/project/swarmmesh-cli/)
+[![npm](https://img.shields.io/npm/v/swarmmesh-cli.svg)](https://www.npmjs.com/package/swarmmesh-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-> **Status:** SwarmMesh isn't on PyPI or npm yet. The commands below are
-> what will work once it publishes. Until then, install from source: see
-> [Install](#install).
 
 ## See it work
 
@@ -61,14 +60,13 @@ translation layer. Just the protocol.
 
 ## Install
 
-Neither package is published yet. Once they are, these will work:
-
 ```bash
 pip install swarmmesh-cli
+# or
 npm install -g swarmmesh-cli
 ```
 
-Until then, install from source:
+Either gives you a `swarmmesh` command on your `PATH`. To build from source instead:
 
 ```bash
 # Python
@@ -82,8 +80,6 @@ npm install
 npm run build
 npm link
 ```
-
-Both give you a `swarmmesh` command on your `PATH`.
 
 ## Quickstart
 

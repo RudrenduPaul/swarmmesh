@@ -239,7 +239,7 @@ export async function callTool(
 
 export function createMcpServer(client: SwarmMeshClient): Server {
   const server = new Server(
-    { name: "swarmmesh", version: "0.1.0" },
+    { name: "swarmmesh", version: "0.1.1" },
     { capabilities: { tools: {} } },
   );
 
