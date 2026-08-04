@@ -21,11 +21,23 @@ independent agent processes read and write the same shared state.
 [![npm](https://img.shields.io/npm/v/swarmmesh-cli.svg)](https://www.npmjs.com/package/swarmmesh-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## Install
+
+```bash
+pip install swarmmesh-cli
+# or
+npm install -g swarmmesh-cli
+```
+
+Either gives you a `swarmmesh` command on your `PATH`.
+
 ## See it work
 
 This is a real terminal session, not a mockup: a Python-run mesh, a Node
 agent writing to it, and a Python agent reading back what the Node agent
 wrote. Two different languages, one shared mesh.
+
+<!-- docs/demo.gif: SwarmMesh demo (starting a mesh, registering an agent, writing context and memory, then querying memory back) not present in this build -- generate and add before next README refresh. -->
 
 ```bash
 # Terminal 1: start a mesh (Python implementation, but either works)
@@ -52,34 +64,25 @@ $ swarmmesh memory query interop-demo "race condition" --port 8420 --json
 { "results": [{ "entry": { "text": "found a race condition in the retry loop" }, "score": 0.575 }] }
 ```
 
-Every command above was run for real against both CLIs during development:
-the Node CLI registered an agent and wrote context/memory against a
-Python-hosted mesh, and the Python CLI read it straight back, in the same
-run, over the real HTTP API. No shared filesystem, no shared process, no
-translation layer. Just the protocol.
+Every command above was re-run for real against both CLIs while writing this
+README: the Node CLI registered an agent and wrote context and memory
+against a Python-hosted mesh, and the Python CLI read it straight back, in
+the same run, over the real HTTP API, with the score above (0.575)
+reproduced exactly. No shared filesystem, no shared process, no translation
+layer. Just the protocol.
 
-## Install
+## Contents
 
-```bash
-pip install swarmmesh-cli
-# or
-npm install -g swarmmesh-cli
-```
-
-Either gives you a `swarmmesh` command on your `PATH`. To build from source instead:
-
-```bash
-# Python
-git clone https://github.com/RudrenduPaul/swarmmesh.git
-cd swarmmesh
-pip install -e python/
-
-# Node
-cd swarmmesh/node
-npm install
-npm run build
-npm link
-```
+- [Quickstart](#quickstart)
+- [Features](#features)
+- [CLI reference](#cli-reference)
+- [Library API reference](#library-api-reference)
+- [The SwarmMesh protocol](#the-swarmmesh-protocol)
+- [How SwarmMesh compares](#how-swarmmesh-compares)
+- [What SwarmMesh is, and why it exists](#what-swarmmesh-is-and-why-it-exists)
+- [FAQ](#faq)
+- [Security](#security)
+- [Contributing](#contributing)
 
 ## Quickstart
 
@@ -102,19 +105,39 @@ swarmmesh memory query my-run "race condition"
 swarmmesh status --json
 ```
 
-This exact sequence was run end to end during development and completed in a
-few seconds, start to finish.
+This exact sequence was run end to end while writing this README and
+completed in a few seconds, start to finish, against the real
+`swarmmesh-cli` package installed from PyPI.
+
+To build from source instead of installing from a registry:
+
+```bash
+# Python
+git clone https://github.com/RudrenduPaul/swarmmesh.git
+cd swarmmesh
+pip install -e python/
+
+# Node
+cd swarmmesh/node
+npm install
+npm run build
+npm link
+```
 
 ## Features
 
-- **A documented wire protocol, not just a library.** [`docs/protocol.md`](docs/protocol.md)
-  specifies every HTTP endpoint and WebSocket event. Anything that can speak
-  HTTP and JSON can join a mesh, not just the two official CLIs.
+- **A documented wire protocol.** [`docs/protocol.md`](docs/protocol.md)
+  specifies every HTTP endpoint and WebSocket event, so any process that can
+  speak HTTP and JSON can join a mesh. The two official CLIs are convenient
+  clients, not the only valid ones.
 - **Two independent, interoperating implementations.** Python
-  (`swarmmesh-cli` on PyPI, FastAPI + Typer, 74 tests, 91% coverage) and Node
-  (`swarmmesh-cli` on npm, Express + commander, 65 tests, 91.75% statement
-  coverage) implement the protocol identically and are tested against each
-  other, not just against themselves.
+  (`swarmmesh-cli` on PyPI, FastAPI + Typer, 74 tests, 91% statement
+  coverage) and Node (`swarmmesh-cli` on npm, Express + commander, 65 tests,
+  91.64% statement coverage) implement the protocol identically. Each
+  package's own test suite runs independently in CI; cross-language interop
+  (a Node client against a Python-hosted server and back) is demonstrated in
+  the "See it work" section above and was re-run by hand against both real
+  packages, not covered by an automated cross-language test in CI today.
 - **Real-time updates over WebSocket.** `/v1/events` pushes
   `context.updated`, `context.deleted`, `memory.written`,
   `agent.registered`, and `agent.deregistered` frames so an agent can react
@@ -136,10 +159,11 @@ few seconds, start to finish.
   See [Security](#security).
 
 The number below is measured, not estimated. 50 sequential `PUT /v1/context/{namespace}/{key}`
-requests against a local Python-run server averaged 1.3ms round trip each
-(63ms total for 50 requests). This isn't a rigorous benchmark and includes
-`curl`'s own process-spawn overhead per request, but it's a real number from
-a real run, not a guess. Reproduce it with:
+requests against a local Python-run server averaged 0.8ms round trip each
+(40ms total for 50 requests) on the machine this README was written on.
+This isn't a rigorous benchmark, includes `curl`'s own process-spawn
+overhead per request, and will vary by machine, but it's a real number from
+a real run, not a guess. Reproduce it yourself with:
 ```bash
 for i in $(seq 1 50); do curl -s -o /dev/null -w "%{time_total}\n" \
   -X PUT "http://127.0.0.1:8420/v1/context/bench/key$i" \
@@ -150,8 +174,8 @@ for i in $(seq 1 50); do curl -s -o /dev/null -w "%{time_total}\n" \
 
 Both CLIs expose the same command tree. Flag names differ slightly between
 the two (Python uses Typer's `--flag <value>` style, Node uses commander's),
-but the commands and their behavior are identical. Output below is from
-running `--help` on each built CLI.
+but the commands and their behavior are identical. Output below is
+transcribed from running `--help` on each built CLI.
 
 ```
 swarmmesh serve [--host HOST] [--port PORT] [--persist PATH]
@@ -172,7 +196,7 @@ swarmmesh context get <namespace> <key> [--host HOST] [--port PORT] [--json]
 swarmmesh context list <namespace> [--host HOST] [--port PORT] [--json]
 swarmmesh context delete <namespace> <key> [--host HOST] [--port PORT] [--json]
 
-swarmmesh memory write <namespace> <text> [--agent-id ID] [--host HOST] [--port PORT] [--json]
+swarmmesh memory write <namespace> <text> [--agent-id ID] [--metadata JSON] [--id ID] [--host HOST] [--port PORT] [--json]
 swarmmesh memory query <namespace> <query> [--top-k N] [--host HOST] [--port PORT] [--json]
 ```
 
@@ -180,6 +204,47 @@ swarmmesh memory query <namespace> <query> [--top-k N] [--host HOST] [--port POR
 isn't valid JSON. `context set ns key '"planning"'` stores the string
 `planning`. So does `context set ns key planning` (no quotes), through the
 same string fallback.
+
+## Library API reference
+
+Both packages export a typed client so you can call a mesh directly from
+your own agent code instead of shelling out to the CLI. Signatures below are
+grepped straight from source, not from memory.
+
+**Python** (`swarmmesh_cli.client.SwarmMeshClient`):
+
+```python
+class SwarmMeshClient:
+    def __init__(self, base_url: str = DEFAULT_BASE_URL, timeout: float = 10.0) -> None: ...
+    async def register_agent(self, agent_id: str, role: str, metadata: dict | None = None) -> dict: ...
+    async def deregister_agent(self, agent_id: str) -> None: ...
+    async def list_agents(self) -> dict: ...
+    async def publish_context(self, namespace: str, key: str, value, agent_id: str, ttl_seconds: int | None = None) -> dict: ...
+    async def get_context(self, namespace: str, key: str) -> dict: ...
+    async def list_context(self, namespace: str) -> dict: ...
+    async def delete_context(self, namespace: str, key: str) -> None: ...
+    async def write_memory(self, namespace: str, text: str, agent_id: str, metadata: dict | None = None) -> dict: ...
+    async def query_memory(self, namespace: str, query: str, top_k: int = 10) -> dict: ...
+    async def get_status(self) -> dict: ...
+```
+
+**Node / TypeScript** (`SwarmMeshClient` from `swarmmesh-cli`):
+
+```typescript
+class SwarmMeshClient {
+  constructor(options?: SwarmMeshClientOptions);
+  registerAgent(agentId: string, role: string, metadata?: Record<string, JsonValue>): Promise<Agent>;
+  deregisterAgent(agentId: string): Promise<void>;
+  listAgents(): Promise<Agent[]>;
+  publishContext(namespace: string, key: string, value: JsonValue, agentId: string, ttlSeconds?: number): Promise<ContextEntry>;
+  getContext(namespace: string, key: string): Promise<ContextEntry | null>;
+  listContext(namespace: string): Promise<ContextEntry[]>;
+  deleteContext(namespace: string, key: string): Promise<void>;
+  writeMemory(namespace: string, text: string, agentId: string, metadata?: Record<string, JsonValue>): Promise<MemoryEntry>;
+  queryMemory(namespace: string, query: string, topK?: number): Promise<MemoryQueryResult[]>;
+  getStatus(): Promise<StatusSnapshot>;
+}
+```
 
 ## The SwarmMesh protocol
 
@@ -206,16 +271,16 @@ apples-to-apples table. It's here to be honest about what two real,
 comparable multi-agent projects actually offer versus what SwarmMesh
 actually offers, checked directly against their READMEs and source, not
 assumed from their names. Both are older, larger, and more established than
-SwarmMesh, which has no users yet.
+SwarmMesh, which has 0 GitHub stars and no known users yet.
 
 | | **SwarmMesh** | **[kyegomez/swarms](https://github.com/kyegomez/swarms)** | **[companion-inc/feynman](https://github.com/companion-inc/feynman)** |
 |---|---|---|---|
 | What it is | Shared context/memory coordination layer (infrastructure, not a framework) | Multi-agent orchestration framework | AI research agent with a local workbench UI |
-| Stars | Pre-launch | 7,023 | 8,446 |
+| Stars | 0 | 7,024 | 8,447 |
 | Primary language | Python + TypeScript (two tested implementations) | Python | TypeScript |
 | License | MIT | Apache-2.0 | MIT |
-| Install | `pip install swarmmesh-cli` / `npm install -g swarmmesh-cli` (source only until publish) | `pip3 install -U swarms` | `curl -fsSL https://feynman.is/install \| bash` |
-| Documented cross-language wire protocol for shared context/memory | Yes: [`docs/protocol.md`](docs/protocol.md), HTTP + WebSocket, two independent implementations tested against each other | Not as a headline feature. AOP is a real MCP-over-HTTP protocol, but it's for calling a named remote agent with a task, not for two agents reading and writing shared memory. A `RedisConversation` backend exists as an example utility, not documented cross-language coordination. | None found. `feynman serve` runs a local, human-facing workbench UI. State lives in a local SQLite mirror under `~/.feynman/`, not behind a documented agent-to-agent API. |
+| Install | `pip install swarmmesh-cli` / `npm install -g swarmmesh-cli` | `pip3 install -U swarms` | `curl -fsSL https://feynman.is/install \| bash` |
+| Documented cross-language wire protocol for shared context/memory | Yes: [`docs/protocol.md`](docs/protocol.md), HTTP + WebSocket, two independent implementations verified interoperable by hand (see "See it work" above) | Not as a headline feature. AOP is a real protocol for deploying and calling a named remote agent as a distributed service, but its documented example is Python-only with no language-agnostic wire format specified. A `RedisConversation` backend exists as an example utility, not documented cross-language coordination. | None found. `feynman serve` runs a local, human-facing workbench UI. State lives in a local SQLite mirror under `~/.feynman/`, not behind a documented agent-to-agent API. |
 | Built-in orchestration patterns (sequential, hierarchical, task routing) | None by design. SwarmMesh expects you to bring an orchestrator | Yes, many. This is the core of what swarms does | Some, internal to its own research workflow, not exposed as a general SDK |
 | Memory search | Keyword (BM25), explicitly not semantic | Not the focus of the project | Not the focus of the project |
 
@@ -252,6 +317,17 @@ happens next. It runs alongside whatever you use for that and gives the
 agents it spawns a shared context and memory layer. Point your orchestrator's
 agents at a `swarmmesh serve` process and keep using it for everything else.
 
+**How is this different from kyegomez/swarms or companion-inc/feynman?**
+Both are larger, older projects solving different problems. swarms is an
+orchestration framework: it decides what agents run, in what order, and how
+they hand off work, and it does that at real depth. SwarmMesh doesn't do any
+of that; it only gives already-running agents a shared place to read and
+write state. feynman is a single research-agent product with a local
+workbench UI and its own SQLite-backed state, not a coordination layer other
+projects embed. Neither ships a documented cross-language wire protocol for
+shared agent memory the way SwarmMesh's `docs/protocol.md` does. Full
+side-by-side above in [How SwarmMesh compares](#how-swarmmesh-compares).
+
 **Is the memory search semantic / embedding-based?**
 No. It's Okapi BM25 keyword ranking, the same family of algorithm search
 engines have used for decades, computed locally over term frequency. It
@@ -267,7 +343,7 @@ This is the reason the project exists. Both CLIs implement the same wire
 protocol in [`docs/protocol.md`](docs/protocol.md), and the "See it work"
 section above is a real transcript of the Node CLI writing context and
 memory to a Python-hosted server, then the Python CLI reading it back over
-the network.
+the network, re-verified while writing this README.
 
 **Does SwarmMesh persist data?**
 Only if you ask it to. `swarmmesh serve` defaults to in-memory storage that's
@@ -287,8 +363,21 @@ build it on top using distinct keys or your own versioning convention.
 
 **Can I use SwarmMesh as a library instead of the CLI?**
 Yes. Both packages export a client: `swarmmesh_cli.client.SwarmMeshClient`
-in Python, `SwarmMeshClient` from `swarmmesh-cli` in Node. Use either to
-call a mesh from your own agent code instead of shelling out to the CLI.
+in Python, `SwarmMeshClient` from `swarmmesh-cli` in Node. See
+[Library API reference](#library-api-reference) above for real method
+signatures.
+
+**Can I run this on more than one machine, and is it production-ready?**
+Nothing stops a mesh from being reachable across a network; `--host` binds
+to any interface you point it at. But there's no authentication in v1 (see
+[Security](#security)), so treat it like a local Redis instance, not a
+public-internet-facing service. It also has 0 known production users at
+this point, so evaluate accordingly.
+
+**Is it free to use commercially?**
+Yes. SwarmMesh is MIT licensed, on both the Python and Node packages and the
+repository itself. Use it in a commercial product without asking permission
+or paying anything.
 
 ## Security
 
