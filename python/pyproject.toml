@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "swarmmesh-cli"
-version = "0.1.1"
-description = "Shared-context and memory coordination server + CLI for swarms of parallel AI agents, speaking the SwarmMesh v1 protocol (HTTP + WebSocket + MCP)."
+version = "0.1.2"
+description = "Shared-context and memory coordination server + CLI for swarms of parallel AI agents, speaking the SwarmMesh v1 protocol (HTTP + WebSocket + MCP), interoperable with the Node implementation."
 readme = "../README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -22,10 +22,10 @@ keywords = [
     "shared-context",
     "mcp",
     "model-context-protocol",
-    "agent-orchestration",
     "cli",
     "fastapi",
     "websocket",
+    "bm25",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

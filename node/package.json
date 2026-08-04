@@ -1,7 +1,7 @@
 {
   "name": "swarmmesh-cli",
-  "version": "0.1.1",
-  "description": "SwarmMesh: a shared-context and memory coordination server for swarms of parallel AI agents. HTTP + WebSocket mesh server, CLI, and MCP surface implementing the SwarmMesh protocol.",
+  "version": "0.1.2",
+  "description": "Shared-context and memory coordination server for swarms of parallel AI agents. HTTP + WebSocket mesh server, CLI, and MCP server implementing the SwarmMesh protocol, interoperable with the Python implementation.",
   "keywords": [
     "swarmmesh",
     "ai-agents",
@@ -14,7 +14,9 @@
     "model-context-protocol",
     "cli",
     "websocket",
-    "bm25"
+    "bm25",
+    "fastapi-interop",
+    "typescript"
   ],
   "homepage": "https://github.com/RudrenduPaul/swarmmesh#readme",
   "bugs": {
