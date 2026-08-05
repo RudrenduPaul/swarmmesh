@@ -37,7 +37,7 @@ This is a real terminal session, not a mockup: a Python-run mesh, a Node
 agent writing to it, and a Python agent reading back what the Node agent
 wrote. Two different languages, one shared mesh.
 
-<!-- docs/demo.gif: SwarmMesh demo (starting a mesh, registering an agent, writing context and memory, then querying memory back) not present in this build -- generate and add before next README refresh. -->
+![swarmmesh demo: starting a mesh, registering an agent, writing context and memory, then querying memory back](docs/demo.gif)
 
 ```bash
 # Terminal 1: start a mesh (Python implementation, but either works)
