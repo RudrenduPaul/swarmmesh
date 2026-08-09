@@ -214,7 +214,7 @@ SwarmMesh, which has no users yet.
 | Stars | Pre-launch | 7,023 | 8,446 |
 | Primary language | Python + TypeScript (two tested implementations) | Python | TypeScript |
 | License | MIT | Apache-2.0 | MIT |
-| Install | `pip install swarmmesh-cli` / `npm install -g swarmmesh-cli` (source only until publish) | `pip3 install -U swarms` | `curl -fsSL https://feynman.is/install \| bash` |
+| Install | `pip install swarmmesh-cli` / `npm install -g swarmmesh-cli` | `pip3 install -U swarms` | `curl -fsSL https://feynman.is/install \| bash` |
 | Documented cross-language wire protocol for shared context/memory | Yes: [`docs/protocol.md`](docs/protocol.md), HTTP + WebSocket, two independent implementations tested against each other | Not as a headline feature. AOP is a real MCP-over-HTTP protocol, but it's for calling a named remote agent with a task, not for two agents reading and writing shared memory. A `RedisConversation` backend exists as an example utility, not documented cross-language coordination. | None found. `feynman serve` runs a local, human-facing workbench UI. State lives in a local SQLite mirror under `~/.feynman/`, not behind a documented agent-to-agent API. |
 | Built-in orchestration patterns (sequential, hierarchical, task routing) | None by design. SwarmMesh expects you to bring an orchestrator | Yes, many. This is the core of what swarms does | Some, internal to its own research workflow, not exposed as a general SDK |
 | Memory search | Keyword (BM25), explicitly not semantic | Not the focus of the project | Not the focus of the project |
