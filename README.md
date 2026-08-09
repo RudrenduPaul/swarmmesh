@@ -177,6 +177,8 @@ the two (Python uses Typer's `--flag <value>` style, Node uses commander's),
 but the commands and their behavior are identical. Output below is
 transcribed from running `--help` on each built CLI.
 
+![swarmmesh --help and swarmmesh agent --help output](docs/demo-help.gif)
+
 ```
 swarmmesh serve [--host HOST] [--port PORT] [--persist PATH]
     Start a SwarmMesh coordination server.
@@ -199,6 +201,8 @@ swarmmesh context delete <namespace> <key> [--host HOST] [--port PORT] [--json]
 swarmmesh memory write <namespace> <text> [--agent-id ID] [--metadata JSON] [--id ID] [--host HOST] [--port PORT] [--json]
 swarmmesh memory query <namespace> <query> [--top-k N] [--host HOST] [--port PORT] [--json]
 ```
+
+![Registering an agent, then swarmmesh status --json and setting/listing context on a running mesh](docs/demo-status.gif)
 
 `context set` parses `<value>` as JSON, falling back to a plain string if it
 isn't valid JSON. `context set ns key '"planning"'` stores the string
