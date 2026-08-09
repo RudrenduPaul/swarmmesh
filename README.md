@@ -1,7 +1,17 @@
 # SwarmMesh
 
+[![CI (Python)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml/badge.svg)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml)
+[![CI (Node)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-node.yml/badge.svg)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-node.yml)
+[![PyPI](https://img.shields.io/pypi/v/swarmmesh-cli.svg)](https://pypi.org/project/swarmmesh-cli/)
+[![npm](https://img.shields.io/npm/v/swarmmesh-cli.svg)](https://www.npmjs.com/package/swarmmesh-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+[Install](#install) • [Quickstart](#quickstart) • [Features](#features) • [CLI reference](#cli-reference) • [Compare](#how-swarmmesh-compares) • [FAQ](#faq)
+
 **Shared context and memory for swarms of parallel AI agents, over a small
 protocol both Python and Node speak the same way.**
+
+![swarmmesh demo: starting a mesh, registering an agent, writing context and memory, then querying memory back](docs/demo.gif)
 
 Spin up ten coding agents on the same task and they cannot see what each
 other found. One agent rediscovers a bug another already fixed. Two agents
@@ -14,14 +24,6 @@ It is not an orchestration framework. It does not schedule tasks, define
 agent roles, or route work between agents. Your existing framework (or your
 own code) keeps doing that. SwarmMesh only answers one question: how do
 independent agent processes read and write the same shared state.
-
-[![CI (Python)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml/badge.svg)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml)
-[![CI (Node)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-node.yml/badge.svg)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-node.yml)
-[![PyPI](https://img.shields.io/pypi/v/swarmmesh-cli.svg)](https://pypi.org/project/swarmmesh-cli/)
-[![npm](https://img.shields.io/npm/v/swarmmesh-cli.svg)](https://www.npmjs.com/package/swarmmesh-cli)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-![swarmmesh demo: starting a mesh, registering an agent, writing context and memory, then querying memory back](docs/demo.gif)
 
 ## Install
 
@@ -70,19 +72,6 @@ against a Python-hosted mesh, and the Python CLI read it straight back, in
 the same run, over the real HTTP API, with the score above (0.575)
 reproduced exactly. No shared filesystem, no shared process, no translation
 layer. Just the protocol.
-
-## Contents
-
-- [Quickstart](#quickstart)
-- [Features](#features)
-- [CLI reference](#cli-reference)
-- [Library API reference](#library-api-reference)
-- [The SwarmMesh protocol](#the-swarmmesh-protocol)
-- [How SwarmMesh compares](#how-swarmmesh-compares)
-- [What SwarmMesh is, and why it exists](#what-swarmmesh-is-and-why-it-exists)
-- [FAQ](#faq)
-- [Security](#security)
-- [Contributing](#contributing)
 
 ## Quickstart
 
@@ -385,13 +374,16 @@ or paying anything.
 
 ## Security
 
-SwarmMesh has no authentication in v1. Both the Python and Node servers bind
-to `127.0.0.1` by default, not `0.0.0.0`. SwarmMesh is designed to run on
-localhost or inside a private network alongside the agents it coordinates.
-That's the same trust boundary as a local Redis instance or a SQLite file,
-not a public-internet-facing service. Running a SwarmMesh server directly
-exposed to the public internet without a reverse proxy adding authentication
-is a misconfiguration, not a supported deployment.
+> [!WARNING]
+> SwarmMesh has no authentication in v1. Running a SwarmMesh server directly
+> exposed to the public internet without a reverse proxy adding
+> authentication is a misconfiguration, not a supported deployment.
+
+Both the Python and Node servers bind to `127.0.0.1` by default, not
+`0.0.0.0`. SwarmMesh is designed to run on localhost or inside a private
+network alongside the agents it coordinates. That's the same trust boundary
+as a local Redis instance or a SQLite file, not a public-internet-facing
+service.
 
 Found a vulnerability? Please don't open a public issue. See
 [`SECURITY.md`](SECURITY.md) for the private disclosure process.
