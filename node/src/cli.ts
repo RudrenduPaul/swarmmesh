@@ -4,7 +4,7 @@
  * a human-readable default, and exits non-zero on error so scripting/CI callers can
  * detect failure without parsing text.
  */
-import { realpathSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { Command } from "commander";
 import {
@@ -64,6 +64,23 @@ function printJson(data: unknown): void {
   console.log(JSON.stringify(data, null, 2));
 }
 
+/** Reads the package version straight from package.json at runtime rather than a
+ * hardcoded string literal, so `swarmmesh --version` can never drift out of sync with
+ * the published package again the way it did in 0.1.2 (package.json bumped, this
+ * string wasn't, and `--version` kept reporting 0.1.1). Resolved relative to this
+ * module's own URL (dist/cli.js -> ../package.json) so it works the same whether the
+ * CLI is run directly or through an npm-installed symlink. */
+function readPackageVersion(): string {
+  try {
+    const packageJsonUrl = new URL("../package.json", import.meta.url);
+    const raw = readFileSync(packageJsonUrl, "utf8");
+    const parsed = JSON.parse(raw) as { version?: string };
+    return parsed.version ?? "0.0.0";
+  } catch {
+    return "0.0.0";
+  }
+}
+
 /** Runs `action`, and on failure prints either a JSON or human-readable error and
  * sets a non-zero process exit code — the shared error path for every subcommand. */
 async function run(json: boolean, action: () => Promise<void>): Promise<void> {
@@ -88,7 +105,7 @@ export function buildCli(): Command {
     .description(
       "Shared-context and memory coordination server for swarms of parallel AI agents.",
     )
-    .version("0.1.1");
+    .version(readPackageVersion());
 
   program
     .command("serve")
