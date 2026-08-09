@@ -21,6 +21,8 @@ independent agent processes read and write the same shared state.
 [![npm](https://img.shields.io/npm/v/swarmmesh-cli.svg)](https://www.npmjs.com/package/swarmmesh-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![swarmmesh demo: starting a mesh, registering an agent, writing context and memory, then querying memory back](docs/demo.gif)
+
 ## Install
 
 ```bash
@@ -36,8 +38,6 @@ Either gives you a `swarmmesh` command on your `PATH`.
 This is a real terminal session, not a mockup: a Python-run mesh, a Node
 agent writing to it, and a Python agent reading back what the Node agent
 wrote. Two different languages, one shared mesh.
-
-![swarmmesh demo: starting a mesh, registering an agent, writing context and memory, then querying memory back](docs/demo.gif)
 
 ```bash
 # Terminal 1: start a mesh (Python implementation, but either works)
