@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.RudrenduPaul/swarmmesh -->
+
 # SwarmMesh
 
 [![CI (Python)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml/badge.svg)](https://github.com/RudrenduPaul/swarmmesh/actions/workflows/ci-python.yml)
@@ -197,6 +199,57 @@ swarmmesh memory query <namespace> <query> [--top-k N] [--host HOST] [--port POR
 isn't valid JSON. `context set ns key '"planning"'` stores the string
 `planning`. So does `context set ns key planning` (no quotes), through the
 same string fallback.
+
+## MCP Server
+
+SwarmMesh ships a Model Context Protocol (MCP) server, on both the Python
+and Node packages, so an MCP-capable agent (Claude Desktop, Claude Code, or
+any other MCP client) can call SwarmMesh as a set of tools instead of
+shelling out to the CLI. The MCP server doesn't reimplement the protocol; it
+proxies each tool call over HTTP to a `swarmmesh serve` process you already
+have running.
+
+```bash
+# 1. Start a mesh
+swarmmesh serve --host 127.0.0.1 --port 8420
+
+# 2. In another terminal (or from an MCP client), start the MCP server
+#    (stdio transport) pointed at that mesh:
+swarmmesh mcp --host 127.0.0.1 --port 8420
+```
+
+`mcp` support is included by default in both packages (it's a core
+dependency, not an optional extra), so a plain `pip install swarmmesh-cli`
+or `npm install -g swarmmesh-cli` is all you need.
+
+Claude Desktop config (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "swarmmesh": {
+      "command": "swarmmesh",
+      "args": ["mcp", "--host", "127.0.0.1", "--port", "8420"]
+    }
+  }
+}
+```
+
+Both the Python and Node MCP servers expose the same ten tools, mirroring
+the `SwarmMeshClient` methods above:
+
+| Tool | What it does | Example call |
+|---|---|---|
+| `register_agent` | Register an agent with the mesh. | `register_agent(agent_id="agent-1", role="researcher")` |
+| `deregister_agent` | Deregister an agent from the mesh. Idempotent. | `deregister_agent(agent_id="agent-1")` |
+| `list_agents` | List agents currently registered with the mesh. | `list_agents()` |
+| `publish_context` | Publish (create or overwrite) a context value in a namespace. | `publish_context(namespace="my-run", key="phase", value="planning", agent_id="agent-1")` |
+| `get_context` | Read a single context value. | `get_context(namespace="my-run", key="phase")` |
+| `list_context` | List all live (non-expired) context entries in a namespace. | `list_context(namespace="my-run")` |
+| `delete_context` | Delete a context value. | `delete_context(namespace="my-run", key="phase")` |
+| `write_memory` | Write a memory entry other agents in the swarm can find later. | `write_memory(namespace="my-run", text="found a race condition in the retry loop", agent_id="agent-1")` |
+| `query_memory` | Query memory entries in a namespace by BM25 keyword ranking (not semantic search). | `query_memory(namespace="my-run", query="race condition")` |
+| `get_status` | Get a mesh status snapshot (agent count, namespaces, entry counts, uptime). | `get_status()` |
 
 ## Library API reference
 
