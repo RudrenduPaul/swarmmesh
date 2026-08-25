@@ -10,14 +10,14 @@ from __future__ import annotations
 
 from typing import Any
 
-from mcp.server.mcpserver import MCPServer
+from mcp.server.fastmcp import FastMCP
 
 from swarmmesh_cli.client import DEFAULT_BASE_URL, SwarmMeshClient
 
 
-def build_mcp_server(base_url: str = DEFAULT_BASE_URL) -> MCPServer:
+def build_mcp_server(base_url: str = DEFAULT_BASE_URL) -> FastMCP:
     """Builds the MCP server. Each tool proxies to `base_url` over HTTP."""
-    server = MCPServer("swarmmesh")
+    server = FastMCP("swarmmesh")
 
     @server.tool()
     async def register_agent(
