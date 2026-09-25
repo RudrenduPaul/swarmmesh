@@ -32,6 +32,10 @@ interface SubscriberState {
   namespaces: Set<string>;
 }
 
+function param(value: string | string[] | undefined): string {
+  return Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
+}
+
 function isSubscribeFrame(value: unknown): value is SubscribeFrame {
   if (typeof value !== "object" || value === null) return false;
   const record = value as Record<string, unknown>;
@@ -90,7 +94,7 @@ export class SwarmMeshServer {
     });
 
     router.delete("/v1/agents/:agent_id", (req: Request, res: Response) => {
-      const agentId = req.params.agent_id ?? "";
+      const agentId = param(req.params.agent_id);
       const removed = this.storage.deregisterAgent(agentId);
       if (!removed) {
         res.status(404).json({ error: `agent_id '${agentId}' is not registered` });
@@ -105,8 +109,8 @@ export class SwarmMeshServer {
     });
 
     router.put("/v1/context/:namespace/:key", (req: Request, res: Response) => {
-      const namespace = req.params.namespace ?? "";
-      const key = req.params.key ?? "";
+      const namespace = param(req.params.namespace);
+      const key = param(req.params.key);
       const result = validatePublishContext(req.body as unknown);
       if (!result.ok) {
         res.status(400).json({ error: result.error });
@@ -136,8 +140,8 @@ export class SwarmMeshServer {
     });
 
     router.get("/v1/context/:namespace/:key", (req: Request, res: Response) => {
-      const namespace = req.params.namespace ?? "";
-      const key = req.params.key ?? "";
+      const namespace = param(req.params.namespace);
+      const key = param(req.params.key);
       const entry = this.storage.getContext(namespace, key);
       if (!entry) {
         res.status(404).json({ error: `no live context entry for ${namespace}/${key}` });
@@ -147,14 +151,14 @@ export class SwarmMeshServer {
     });
 
     router.get("/v1/context/:namespace", (req: Request, res: Response) => {
-      const namespace = req.params.namespace ?? "";
+      const namespace = param(req.params.namespace);
       const entries = this.storage.listContext(namespace);
       res.status(200).json({ namespace, entries });
     });
 
     router.delete("/v1/context/:namespace/:key", (req: Request, res: Response) => {
-      const namespace = req.params.namespace ?? "";
-      const key = req.params.key ?? "";
+      const namespace = param(req.params.namespace);
+      const key = param(req.params.key);
       const deleted = this.storage.deleteContext(namespace, key);
       if (deleted) {
         this.broadcast({ type: "context.deleted", namespace, key }, namespace);
@@ -163,7 +167,7 @@ export class SwarmMeshServer {
     });
 
     router.post("/v1/memory/:namespace", (req: Request, res: Response) => {
-      const namespace = req.params.namespace ?? "";
+      const namespace = param(req.params.namespace);
       const result = validateWriteMemory(req.body as unknown);
       if (!result.ok) {
         res.status(400).json({ error: result.error });
@@ -192,7 +196,7 @@ export class SwarmMeshServer {
     });
 
     router.post("/v1/memory/:namespace/query", (req: Request, res: Response) => {
-      const namespace = req.params.namespace ?? "";
+      const namespace = param(req.params.namespace);
       const result = validateQueryMemory(req.body as unknown);
       if (!result.ok) {
         res.status(400).json({ error: result.error });
